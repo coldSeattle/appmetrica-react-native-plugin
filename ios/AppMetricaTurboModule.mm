@@ -1,10 +1,6 @@
 #import <React/RCTBridgeModule.h>
 #import <ReactCommon/RCTTurboModule.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <AppMetricaTurboSpec/AppMetricaTurboSpec.h>
-#endif
-
 // Импортируем ваши существующие утилиты
 #import "AMARNAppMetrica.h"
 #import "AMARNAppMetricaUtils.h"
@@ -17,29 +13,31 @@
  * AppMetricaTurboModule - iOS реализация для новой архитектуры React Native
  * 
  * Этот класс реализует интерфейс TurboModule для AppMetrica
- * Позволяет JavaScript коду напрямую вызывать нативные методы через JSI
- * без использования старого Bridge с JSON сериализацией
+ * Работает как настоящий TurboModule с JSI, обеспечивая прямые вызовы
+ * без JSON сериализации для максимальной производительности
  * 
- * Все методы соответствуют спецификации в AppMetricaSpec.ts
+ * Все методы соответствуют спецификации в AppMetricaTurboSpec.ts
  */
-@interface AppMetricaTurboModule : NSObject <RCTBridgeModule>
+@interface AppMetricaTurboModule : NSObject <RCTBridgeModule, RCTTurboModule>
 
 @end
-
-#ifdef RCT_NEW_ARCH_ENABLED
-@interface AppMetricaTurboModule () <NativeAppMetricaTurboSpec>
-@end
-#endif
 
 @implementation AppMetricaTurboModule
 
 RCT_EXPORT_MODULE(AppMetricaTurbo)
 
-#ifdef RCT_NEW_ARCH_ENABLED
+// MARK: - TurboModule Implementation
+
+/**
+ * Реализация метода getTurboModule для работы с JSI
+ * Этот метод позволяет модулю работать как настоящий TurboModule
+ * с прямыми вызовами через JavaScript Interface без JSON сериализации
+ * 
+ * Использует ObjCTurboModule как базовый класс для JSI интеграции
+ */
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
-  return std::make_shared<facebook::react::NativeAppMetricaTurboSpecJSI>(params);
+    return std::make_shared<facebook::react::ObjCTurboModule>(params);
 }
-#endif
 
 // MARK: - Основные методы активации и управления
 

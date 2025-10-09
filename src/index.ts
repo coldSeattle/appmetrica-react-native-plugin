@@ -12,7 +12,7 @@ import type {
 } from './deferredDeeplink';
 
 // Импортируем TurboModule спецификацию
-import NativeAppMetrica from '../spec/AppMetricaSpec';
+import NativeAppMetrica from '../AppMetricaTurboSpec';
 
 // const LINKING_ERROR =
 //   `The package '@appmetrica/react-native-analytics' doesn't seem to be linked. Make sure: \n\n` +

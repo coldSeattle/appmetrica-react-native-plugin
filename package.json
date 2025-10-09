@@ -130,15 +130,15 @@
     ]
   },
   "codegenConfig": {
-    "name": "AppMetricaTurbo",
+    "name": "AppMetricaTurboSpec",
     "type": "modules",
-    "jsSrcsDir": "spec",
+    "jsSrcsDir": ".",
     "android": {
       "javaPackageName": "io.appmetrica.analytics.reactnative"
     },
     "ios": {
       "modulesProvider": {
-        "AppMetricaTurbo": "AppMetricaTurboModule"
+        "AppMetricaTurboSpec": "AppMetricaTurboModule"
       }
     }
   }
