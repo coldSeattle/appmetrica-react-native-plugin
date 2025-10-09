@@ -16,9 +16,16 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm}"
   
-  # Include generated files
+  # Include generated files from codegen
   s.header_dir = "."
   s.public_header_files = "ios/**/*.h"
+  
+  # Add header search paths for generated files
+  s.pod_target_xcconfig = {
+    "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/../ios/build/generated/ios/build/generated/ios/AppMetricaTurboSpec\"",
+    "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
+    "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
+  }
   
   # Turbo Module support
   s.dependency "React-Codegen"
