@@ -16,6 +16,10 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm}"
   
+  # Include generated files
+  s.header_dir = "."
+  s.public_header_files = "ios/**/*.h"
+  
   # Turbo Module support
   s.dependency "React-Codegen"
   s.dependency "RCT-Folly"

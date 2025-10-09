@@ -32,13 +32,21 @@ use_frameworks! :linkage => :static
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 ```
 
-2. Run pod install:
+2. Generate code from spec file:
+
+```bash
+npm run codegen
+# or
+npx react-native codegen --path . --outputPath ios/build/generated/ios
+```
+
+3. Run pod install:
 
 ```bash
 cd ios && pod install
 ```
 
-3. Clean and rebuild your project:
+4. Clean and rebuild your project:
 
 ```bash
 # Clean
@@ -125,6 +133,7 @@ The library includes proper `codegenConfig` in `package.json`:
 ```
 
 This configuration tells React Native's Codegen tool:
+
 - Where to find the spec file (`src/AppMetricaTurboSpec.ts`)
 - What type of module it is (`modules`)
 - The name of the spec (`AppMetricaTurboSpec`)
