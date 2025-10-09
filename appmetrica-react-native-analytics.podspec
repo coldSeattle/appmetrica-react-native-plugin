@@ -37,7 +37,8 @@ Pod::Spec.new do |s|
           "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/RCT-Folly\"",
           "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
           "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
-          "CLANG_CXX_LIBRARY" => "libc++"
+          "CLANG_CXX_LIBRARY" => "libc++",
+          "OTHER_LDFLAGS" => "-lc++"
       }
       
       # Зависимости для новой архитектуры

@@ -3,4 +3,13 @@
 
 @class AMARNExceptionSerializer;
 
-AMAPluginErrorDetails *amarn_exceptionForDictionary(NSDictionary * configDict);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    AMAPluginErrorDetails *amarn_exceptionForDictionary(NSDictionary *configDict);
+
+#ifdef __cplusplus
+}
+#endif

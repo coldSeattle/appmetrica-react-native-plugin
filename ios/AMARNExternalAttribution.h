@@ -1,4 +1,13 @@
 
 #include "AppMetricaCore/AppMetricaCore.h"
 
-AMAAttributionSource amarn_getExternalAttributionSource(NSString *source);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    AMAAttributionSource amarn_getExternalAttributionSource(NSString *source);
+
+#ifdef __cplusplus
+}
+#endif
