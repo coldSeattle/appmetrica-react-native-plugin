@@ -11,22 +11,33 @@ import type {
   DeferredDeeplinkParametersListener,
 } from './deferredDeeplink';
 
-const LINKING_ERROR =
-  `The package '@appmetrica/react-native-analytics' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
+// Импортируем TurboModule спецификацию
+import NativeAppMetrica from '../spec/AppMetricaSpec';
 
-const AppMetricaNative = NativeModules.AppMetrica
-  ? NativeModules.AppMetrica
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+// const LINKING_ERROR =
+//   `The package '@appmetrica/react-native-analytics' doesn't seem to be linked. Make sure: \n\n` +
+//   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
+//   '- You rebuilt the app after installing the package\n' +
+//   '- You are not using Expo Go\n';
+
+/**
+ * Определяем какой модуль использовать:
+ * - NativeAppMetrica (TurboModule) - если новая архитектура включена
+ * - NativeModules.AppMetrica (Bridge) - если старая архитектура
+ */
+const AppMetricaModule = NativeAppMetrica || NativeModules.AppMetrica;
+
+// // Проверяем доступность модуля
+// const AppMetricaModule = AppMetricaModule
+//   ? AppMetricaModule
+//   : new Proxy(
+//       {},
+//       {
+//         get() {
+//           throw new Error(LINKING_ERROR);
+//         },
+//       }
+//     );
 
 var activated = false;
 
@@ -34,11 +45,11 @@ function appOpenTracking() {
   const getUrlAsync = async () => {
     const initialUrl = await Linking.getInitialURL();
     if (initialUrl != null) {
-      AppMetricaNative.reportAppOpen(initialUrl);
+      AppMetricaModule.reportAppOpen(initialUrl);
     }
   };
   const callback = (event: { url: string }) => {
-    AppMetricaNative.reportAppOpen(event.url);
+    AppMetricaModule.reportAppOpen(event.url);
   };
   getUrlAsync();
   Linking.addEventListener('url', callback);
@@ -108,12 +119,12 @@ export type { IReporter, ReporterConfig } from './reporter';
 export * from './deferredDeeplink';
 
 export default class AppMetrica {
-
   private static reporters: Map<string, Reporter> = new Map();
 
   static activate(config: AppMetricaConfig) {
     if (!activated) {
-      AppMetricaNative.activate(config);
+      // Используем новый модуль (TurboModule или Bridge)
+      AppMetricaModule.activate(config);
       if (config.appOpenTrackingEnabled !== false) {
         appOpenTracking();
       }
@@ -123,19 +134,19 @@ export default class AppMetrica {
 
   // Android only
   static async getLibraryApiLevel(): Promise<number> {
-    return AppMetricaNative.getLibraryApiLevel();
+    return AppMetricaModule.getLibraryApiLevel();
   }
 
   static async getLibraryVersion(): Promise<string> {
-    return AppMetricaNative.getLibraryVersion();
+    return AppMetricaModule.getLibraryVersion();
   }
 
   static pauseSession() {
-    AppMetricaNative.pauseSession();
+    AppMetricaModule.pauseSession();
   }
 
   static reportAppOpen(deeplink?: string) {
-    AppMetricaNative.reportAppOpen(deeplink);
+    AppMetricaModule.reportAppOpen(deeplink);
   }
 
   static reportError(
@@ -143,93 +154,101 @@ export default class AppMetrica {
     message?: string,
     _reason?: Error | Object
   ) {
-    AppMetricaNative.reportError(
+    AppMetricaModule.reportError(
       identifier,
       message,
-      _reason instanceof Error ? AppMetricaError.withError(_reason) : AppMetricaError.withObject(_reason)
+      _reason instanceof Error
+        ? AppMetricaError.withError(_reason)
+        : AppMetricaError.withObject(_reason)
     );
   }
 
   static reportUnhandledException(error: Error) {
-    AppMetricaNative.reportUnhandledException(AppMetricaError.withError(error));
+    AppMetricaModule.reportUnhandledException(AppMetricaError.withError(error));
   }
 
-  static reportErrorWithoutIdentifier(message: string | undefined, error: Error) {
-    AppMetricaNative.reportErrorWithoutIdentifier(message, AppMetricaError.withError(error));
+  static reportErrorWithoutIdentifier(
+    message: string | undefined,
+    error: Error
+  ) {
+    AppMetricaModule.reportErrorWithoutIdentifier(
+      message,
+      AppMetricaError.withError(error)
+    );
   }
 
   static reportEvent(eventName: string, attributes?: Record<string, any>) {
-    AppMetricaNative.reportEvent(eventName, attributes);
+    AppMetricaModule.reportEvent(eventName, attributes);
   }
 
   static requestStartupParams(
     listener: StartupParamsCallback,
     identifiers: Array<string>
   ) {
-    AppMetricaNative.requestStartupParams(identifiers, listener);
+    AppMetricaModule.requestStartupParams(identifiers, listener);
   }
 
   static resumeSession() {
-    AppMetricaNative.resumeSession();
+    AppMetricaModule.resumeSession();
   }
 
   static sendEventsBuffer() {
-    AppMetricaNative.sendEventsBuffer();
+    AppMetricaModule.sendEventsBuffer();
   }
 
   static setLocation(location?: Location) {
-    AppMetricaNative.setLocation(location);
+    AppMetricaModule.setLocation(location);
   }
 
   static setLocationTracking(enabled: boolean) {
-    AppMetricaNative.setLocationTracking(enabled);
+    AppMetricaModule.setLocationTracking(enabled);
   }
 
   static setDataSendingEnabled(enabled: boolean) {
-    AppMetricaNative.setDataSendingEnabled(enabled);
+    AppMetricaModule.setDataSendingEnabled(enabled);
   }
 
   static setUserProfileID(userProfileID?: string) {
-    AppMetricaNative.setUserProfileID(userProfileID);
+    AppMetricaModule.setUserProfileID(userProfileID);
   }
 
   static reportECommerce(event: ECommerceEvent) {
-    AppMetricaNative.reportECommerce(event);
+    AppMetricaModule.reportECommerce(event);
   }
 
   static reportRevenue(revenue: Revenue) {
-    AppMetricaNative.reportRevenue(revenue);
+    AppMetricaModule.reportRevenue(revenue);
   }
 
   static reportAdRevenue(adRevenue: AdRevenue) {
-    AppMetricaNative.reportAdRevenue(normalizeAdRevenue(adRevenue));
+    AppMetricaModule.reportAdRevenue(normalizeAdRevenue(adRevenue));
   }
 
   static reportUserProfile(userProfile: UserProfile) {
-    AppMetricaNative.reportUserProfile(userProfile);
+    AppMetricaModule.reportUserProfile(userProfile);
   }
 
   static putErrorEnvironmentValue(key: string, value?: string) {
-    AppMetricaNative.putErrorEnvironmentValue(key, value);
+    AppMetricaModule.putErrorEnvironmentValue(key, value);
   }
 
   static reportExternalAttribution(attribution: ExternalAttribution) {
-    AppMetricaNative.reportExternalAttribution(attribution);
+    AppMetricaModule.reportExternalAttribution(attribution);
   }
 
   static putAppEnvironmentValue(key: string, value?: string) {
-    AppMetricaNative.putAppEnvironmentValue(key, value);
+    AppMetricaModule.putAppEnvironmentValue(key, value);
   }
 
   static clearAppEnvironment() {
-    AppMetricaNative.clearAppEnvironment();
+    AppMetricaModule.clearAppEnvironment();
   }
 
   static getReporter(apiKey: string): IReporter {
     if (AppMetrica.reporters.has(apiKey)) {
       return AppMetrica.reporters.get(apiKey)!;
     } else {
-      AppMetricaNative.touchReporter(apiKey);
+      AppMetricaModule.touchReporter(apiKey);
       const reporter = new Reporter(apiKey);
       AppMetrica.reporters.set(apiKey, reporter);
       return reporter;
@@ -237,19 +256,19 @@ export default class AppMetrica {
   }
 
   static activateReporter(config: ReporterConfig) {
-    AppMetricaNative.activateReporter(config);
+    AppMetricaModule.activateReporter(config);
   }
 
   static getDeviceId(): Promise<string | null> {
-    return AppMetricaNative.getDeviceId();
+    return AppMetricaModule.getDeviceId();
   }
 
   static getUuid(): Promise<string | null> {
-    return AppMetricaNative.getUuid();
+    return AppMetricaModule.getUuid();
   }
 
   static requestDeferredDeeplink(listener: DeferredDeeplinkListener) {
-    AppMetricaNative.requestDeferredDeeplink(
+    AppMetricaModule.requestDeferredDeeplink(
       listener.onFailure,
       listener.onSuccess
     );
@@ -258,7 +277,7 @@ export default class AppMetrica {
   static requestDeferredDeeplinkParameters(
     listener: DeferredDeeplinkParametersListener
   ) {
-    AppMetricaNative.requestDeferredDeeplinkParameters(
+    AppMetricaModule.requestDeferredDeeplinkParameters(
       listener.onFailure,
       listener.onSuccess
     );

@@ -14,8 +14,13 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/appmetrica/appmetrica-react-native-plugin.git", :tag => "#{s.version}" }
 
+  # Включаем все файлы iOS, включая новый .mm файл
   s.source_files = "ios/**/*.{h,m,mm}"
+  
+  # Включаем спецификацию TypeScript для CodeGen
+  s.source_files += "spec/**/*.{h,cpp}"
 
+  # Основная зависимость AppMetrica
   s.dependency "AppMetricaAnalytics", "5.12.1"
 
   # Use install_modules_dependencies helper to install the dependencies if React Native version >=0.71.0.
@@ -27,17 +32,27 @@ Pod::Spec.new do |s|
 
     # Don't install the dependencies when we run `pod install` in the old architecture.
     if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
+      # Флаги компилятора для новой архитектуры
       s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
+      
+      # Конфигурация для C++ компиляции
       s.pod_target_xcconfig    = {
-          "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
+          "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/RCT-Folly\"",
           "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
-          "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
+          "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
+          "CLANG_CXX_LIBRARY" => "libc++"
       }
+      
+      # Зависимости для новой архитектуры
       s.dependency "React-Codegen"
       s.dependency "RCT-Folly"
       s.dependency "RCTRequired"
       s.dependency "RCTTypeSafety"
       s.dependency "ReactCommon/turbomodule/core"
+      
+      # Дополнительные зависимости для TurboModule
+      s.dependency "ReactCommon/turbomodule/utils"
+      s.dependency "ReactCommon/turbomodule/runtime"
     end
   end
 end
