@@ -14,11 +14,8 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/appmetrica/appmetrica-react-native-plugin.git", :tag => "#{s.version}" }
 
-  # Включаем все файлы iOS, включая новый .mm файл
-  s.source_files = "ios/**/*.{h,m,mm}"
-  
-  # Включаем спецификацию TypeScript для CodeGen
-  s.source_files += "spec/**/*.{h,cpp}"
+  # Включаем все файлы iOS и спецификации TypeScript для CodeGen
+  s.source_files = "ios/**/*.{h,m,mm}", "spec/**/*.{h,cpp}"
 
   # Основная зависимость AppMetrica
   s.dependency "AppMetricaAnalytics", "5.12.1"
