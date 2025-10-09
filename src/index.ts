@@ -1,4 +1,4 @@
-import { Linking, NativeModules, Platform } from 'react-native';
+import { Linking, NativeModules } from 'react-native';
 import type { ECommerceEvent } from './ecommerce';
 import type { AdRevenue, Revenue } from './revenue';
 import type { UserProfile } from './userProfile';
