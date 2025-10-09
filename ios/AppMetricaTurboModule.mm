@@ -1,6 +1,10 @@
 #import <React/RCTBridgeModule.h>
 #import <ReactCommon/RCTTurboModule.h>
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <AppMetricaTurboSpec/AppMetricaTurboSpec.h>
+#endif
+
 // Импортируем ваши существующие утилиты
 #import "AMARNAppMetrica.h"
 #import "AMARNAppMetricaUtils.h"
@@ -18,14 +22,24 @@
  * 
  * Все методы соответствуют спецификации в AppMetricaSpec.ts
  */
-@interface AppMetricaTurboModule : NSObject <RCTBridgeModule, RCTTurboModule>
+@interface AppMetricaTurboModule : NSObject <RCTBridgeModule>
 
 @end
 
+#ifdef RCT_NEW_ARCH_ENABLED
+@interface AppMetricaTurboModule () <NativeAppMetricaTurboSpec>
+@end
+#endif
+
 @implementation AppMetricaTurboModule
 
-// Реализуем протокол RCTTurboModule
 RCT_EXPORT_MODULE(AppMetricaTurbo)
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
+  return std::make_shared<facebook::react::NativeAppMetricaTurboSpecJSI>(params);
+}
+#endif
 
 // MARK: - Основные методы активации и управления
 

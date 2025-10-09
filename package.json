@@ -128,5 +128,18 @@
         }
       ]
     ]
+  },
+  "codegenConfig": {
+    "name": "AppMetricaTurbo",
+    "type": "modules",
+    "jsSrcsDir": "spec",
+    "android": {
+      "javaPackageName": "io.appmetrica.analytics.reactnative"
+    },
+    "ios": {
+      "modulesProvider": {
+        "AppMetricaTurbo": "AppMetricaTurboModule"
+      }
+    }
   }
 }
