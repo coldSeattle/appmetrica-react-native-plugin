@@ -24,7 +24,8 @@
 
 @implementation AppMetricaTurboModule
 
-RCT_EXPORT_MODULE(AppMetrica)
+// Реализуем протокол RCTTurboModule
+RCT_EXPORT_MODULE()
 
 // MARK: - Основные методы активации и управления
 
@@ -34,7 +35,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * 
  * @param config - словарь с конфигурацией AppMetrica
  */
-- (void)activate:(NSDictionary *)config {
+RCT_EXPORT_METHOD(activate:(NSDictionary *)config)
+{
     // Используем ваши существующие утилиты для конвертации конфигурации
     [[AMAAppMetricaCrashes crashes] setConfiguration:[AMARNAppMetricaUtils crashConfigurationForDictionary:config]];
     [AMAAppMetrica activateWithConfiguration:[AMARNAppMetricaUtils configurationForDictionary:config]];
@@ -46,8 +48,9 @@ RCT_EXPORT_MODULE(AppMetrica)
  * 
  * @return NSNumber с значением 0
  */
-- (NSNumber *)getLibraryApiLevel {
-    return @0; // iOS не поддерживает API level
+RCT_EXPORT_METHOD(getLibraryApiLevel:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    resolve(@0); // iOS не поддерживает API level
 }
 
 /**
@@ -56,8 +59,9 @@ RCT_EXPORT_MODULE(AppMetrica)
  * 
  * @return NSString с версией библиотеки
  */
-- (NSString *)getLibraryVersion {
-    return [AMAAppMetrica libraryVersion];
+RCT_EXPORT_METHOD(getLibraryVersion:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    resolve([AMAAppMetrica libraryVersion]);
 }
 
 // MARK: - Управление сессиями
@@ -66,7 +70,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * Приостановка сессии
  * Вызываем нативный метод AppMetrica
  */
-- (void)pauseSession {
+RCT_EXPORT_METHOD(pauseSession)
+{
     [AMAAppMetrica pauseSession];
 }
 
@@ -74,7 +79,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * Возобновление сессии
  * Вызываем нативный метод AppMetrica
  */
-- (void)resumeSession {
+RCT_EXPORT_METHOD(resumeSession)
+{
     [AMAAppMetrica resumeSession];
 }
 
@@ -82,7 +88,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * Отправка буфера событий
  * Вызываем нативный метод AppMetrica
  */
-- (void)sendEventsBuffer {
+RCT_EXPORT_METHOD(sendEventsBuffer)
+{
     [AMAAppMetrica sendEventsBuffer];
 }
 
@@ -94,7 +101,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * 
  * @param deeplink - строка с deeplink (может быть nil)
  */
-- (void)reportAppOpen:(NSString *)deeplink {
+RCT_EXPORT_METHOD(reportAppOpen:(NSString *)deeplink)
+{
     if (deeplink) {
         [AMAAppMetrica trackOpeningURL:[NSURL URLWithString:deeplink]];
     }
@@ -107,7 +115,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * @param eventName - название события
  * @param attributes - словарь с атрибутами события (может быть nil)
  */
-- (void)reportEvent:(NSString *)eventName attributes:(NSDictionary *)attributes {
+RCT_EXPORT_METHOD(reportEvent:(NSString *)eventName attributes:(NSDictionary *)attributes)
+{
     if (attributes) {
         [AMAAppMetrica reportEvent:eventName parameters:attributes onFailure:^(NSError *error) {
             NSLog(@"AppMetrica error: %@", [error localizedDescription]);
@@ -127,7 +136,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * @param message - сообщение об ошибке (может быть nil)
  * @param reason - словарь с деталями ошибки (может быть nil)
  */
-- (void)reportError:(NSString *)identifier message:(NSString *)message reason:(NSDictionary *)reason {
+RCT_EXPORT_METHOD(reportError:(NSString *)identifier message:(NSString *)message reason:(NSDictionary *)reason)
+{
     [[[AMAAppMetricaCrashes crashes] pluginExtension] reportErrorWithIdentifier:identifier
                                                                         message:message
                                                                         details:amarn_exceptionForDictionary(reason)
@@ -143,32 +153,34 @@ RCT_EXPORT_MODULE(AppMetrica)
  * @param message - сообщение об ошибке
  * @param error - словарь с деталями ошибки
  */
-- (void)reportErrorWithoutIdentifier:(NSString *)message error:(NSDictionary *)error {
+RCT_EXPORT_METHOD(reportErrorWithoutIdentifier:(NSString *)message error:(NSDictionary *)error)
+{
     AMAPluginErrorDetails *details = amarn_exceptionForDictionary(error);
     if (details.backtrace.count == 0) {
         [[[AMAAppMetricaCrashes crashes] pluginExtension] reportErrorWithIdentifier:@"Errors without stacktrace"
                                                                             message:message
                                                                             details:details
-                                                                          onFailure:^(NSError *error) {
-            NSLog(@"Failed to report error to AppMetrica: %@", [error localizedDescription]);
+                                                                          onFailure:^(NSError *err) {
+            NSLog(@"Failed to report error without identifier to AppMetrica: %@", [err localizedDescription]);
         }];
     } else {
-        [[[AMAAppMetricaCrashes crashes] pluginExtension] reportError:details message:message onFailure:^(NSError *error) {
-            NSLog(@"Failed to report error to AppMetrica: %@", [error localizedDescription]);
+        [[[AMAAppMetricaCrashes crashes] pluginExtension] reportError:details message:message onFailure:^(NSError *err) {
+            NSLog(@"Failed to report error without identifier to AppMetrica: %@", [err localizedDescription]);
         }];
     }
 }
 
 /**
  * Отчет о необработанном исключении
- * Вызываем нативный метод AppMetrica с деталями ошибки
+ * Вызываем нативный метод AppMetrica с деталями исключения
  * 
- * @param error - словарь с деталями ошибки
+ * @param error - словарь с деталями исключения
  */
-- (void)reportUnhandledException:(NSDictionary *)error {
+RCT_EXPORT_METHOD(reportUnhandledException:(NSDictionary *)error)
+{
     [[[AMAAppMetricaCrashes crashes] pluginExtension] reportUnhandledException:amarn_exceptionForDictionary(error)
-                                                                     onFailure:^(NSError *error) {
-        NSLog(@"Failed to report unhandled exception to AppMetrica: %@", [error localizedDescription]);
+                                                                   onFailure:^(NSError *err) {
+        NSLog(@"Failed to report unhandled exception to AppMetrica: %@", [err localizedDescription]);
     }];
 }
 
@@ -176,44 +188,56 @@ RCT_EXPORT_MODULE(AppMetrica)
 
 /**
  * Отчет о E-commerce событии
- * Конвертируем параметры и вызываем нативный метод
+ * Вызываем нативный метод AppMetrica с E-commerce событием
  * 
- * @param ecommerceEvent - словарь с данными E-commerce события
+ * @param ecommerceEvent - словарь с E-commerce событием
  */
-- (void)reportECommerce:(NSDictionary *)ecommerceEvent {
-    [AMAAppMetrica reportECommerce:[AMARNAppMetricaUtils ecommerceForDict:ecommerceEvent] onFailure:nil];
+RCT_EXPORT_METHOD(reportECommerce:(NSDictionary *)ecommerceEvent)
+{
+    [AMAAppMetrica reportECommerce:[AMARNAppMetricaUtils ecommerceForDict:ecommerceEvent] onFailure:^(NSError *error) {
+        NSLog(@"Failed to report E-commerce event to AppMetrica: %@", [error localizedDescription]);
+    }];
 }
 
 /**
  * Отчет о доходе
- * Конвертируем параметры и вызываем нативный метод
+ * Вызываем нативный метод AppMetrica с доходом
  * 
- * @param revenue - словарь с данными о доходе
+ * @param revenue - словарь с доходом
  */
-- (void)reportRevenue:(NSDictionary *)revenue {
-    [AMAAppMetrica reportRevenue:[AMARNAppMetricaUtils revenueForDict:revenue] onFailure:nil];
+RCT_EXPORT_METHOD(reportRevenue:(NSDictionary *)revenue)
+{
+    [AMAAppMetrica reportRevenue:[AMARNAppMetricaUtils revenueForDict:revenue] onFailure:^(NSError *error) {
+        NSLog(@"Failed to report revenue to AppMetrica: %@", [error localizedDescription]);
+    }];
 }
 
 /**
  * Отчет о доходе от рекламы
- * Конвертируем параметры и вызываем нативный метод
+ * Вызываем нативный метод AppMetrica с доходом от рекламы
  * 
- * @param adRevenue - словарь с данными о доходе от рекламы
+ * @param adRevenue - словарь с доходом от рекламы
  */
-- (void)reportAdRevenue:(NSDictionary *)adRevenue {
-    [AMAAppMetrica reportAdRevenue:[AMARNAppMetricaUtils adRevenueForDict:adRevenue] onFailure:nil];
+RCT_EXPORT_METHOD(reportAdRevenue:(NSDictionary *)adRevenue)
+{
+    [AMAAppMetrica reportAdRevenue:[AMARNAppMetricaUtils adRevenueForDict:adRevenue] onFailure:^(NSError *error) {
+        NSLog(@"Failed to report ad revenue to AppMetrica: %@", [error localizedDescription]);
+    }];
 }
 
 // MARK: - Пользовательские данные
 
 /**
  * Отчет о профиле пользователя
- * Конвертируем параметры и вызываем нативный метод
+ * Вызываем нативный метод AppMetrica с профилем пользователя
  * 
- * @param userProfile - словарь с данными профиля пользователя
+ * @param userProfile - словарь с профилем пользователя
  */
-- (void)reportUserProfile:(NSDictionary *)userProfile {
-    [AMAAppMetrica reportUserProfile:[AMARNAppMetricaUtils userProfileForDict:userProfile] onFailure:nil];
+RCT_EXPORT_METHOD(reportUserProfile:(NSDictionary *)userProfile)
+{
+    [AMAAppMetrica reportUserProfile:[AMARNAppMetricaUtils userProfileForDict:userProfile] onFailure:^(NSError *error) {
+        NSLog(@"Failed to report user profile to AppMetrica: %@", [error localizedDescription]);
+    }];
 }
 
 /**
@@ -222,7 +246,8 @@ RCT_EXPORT_MODULE(AppMetrica)
  * 
  * @param userProfileID - ID профиля пользователя (может быть nil)
  */
-- (void)setUserProfileID:(NSString *)userProfileID {
+RCT_EXPORT_METHOD(setUserProfileID:(NSString *)userProfileID)
+{
     [AMAAppMetrica setUserProfileID:userProfileID];
 }
 
@@ -230,11 +255,12 @@ RCT_EXPORT_MODULE(AppMetrica)
 
 /**
  * Установка локации
- * Конвертируем параметры и вызываем нативный метод
+ * Вызываем нативный метод AppMetrica с локацией
  * 
- * @param location - словарь с данными локации (может быть nil)
+ * @param location - словарь с локацией (может быть nil)
  */
-- (void)setLocation:(NSDictionary *)location {
+RCT_EXPORT_METHOD(setLocation:(NSDictionary *)location)
+{
     AMAAppMetrica.customLocation = [AMARNAppMetricaUtils locationForDictionary:location];
 }
 
@@ -242,9 +268,10 @@ RCT_EXPORT_MODULE(AppMetrica)
  * Включение/выключение отслеживания локации
  * Вызываем нативный метод AppMetrica
  * 
- * @param enabled - включить или выключить отслеживание локации
+ * @param enabled - включить отслеживание локации
  */
-- (void)setLocationTracking:(BOOL)enabled {
+RCT_EXPORT_METHOD(setLocationTracking:(BOOL)enabled)
+{
     AMAAppMetrica.locationTrackingEnabled = enabled;
 }
 
@@ -254,39 +281,43 @@ RCT_EXPORT_MODULE(AppMetrica)
  * Включение/выключение отправки данных
  * Вызываем нативный метод AppMetrica
  * 
- * @param enabled - включить или выключить отправку данных
+ * @param enabled - включить отправку данных
  */
-- (void)setDataSendingEnabled:(BOOL)enabled {
+RCT_EXPORT_METHOD(setDataSendingEnabled:(BOOL)enabled)
+{
     [AMAAppMetrica setDataSendingEnabled:enabled];
 }
 
 /**
- * Установка значения окружения ошибки
+ * Установка значения переменной окружения для ошибок
  * Вызываем нативный метод AppMetrica
  * 
- * @param key - ключ
- * @param value - значение (может быть nil)
+ * @param key - ключ переменной окружения
+ * @param value - значение переменной окружения (может быть nil)
  */
-- (void)putErrorEnvironmentValue:(NSString *)key value:(NSString *)value {
+RCT_EXPORT_METHOD(putErrorEnvironmentValue:(NSString *)key value:(NSString *)value)
+{
     [[AMAAppMetricaCrashes crashes] setErrorEnvironmentValue:value forKey:key];
 }
 
 /**
- * Установка значения окружения приложения
+ * Установка значения переменной окружения приложения
  * Вызываем нативный метод AppMetrica
  * 
- * @param key - ключ
- * @param value - значение (может быть nil)
+ * @param key - ключ переменной окружения
+ * @param value - значение переменной окружения (может быть nil)
  */
-- (void)putAppEnvironmentValue:(NSString *)key value:(NSString *)value {
+RCT_EXPORT_METHOD(putAppEnvironmentValue:(NSString *)key value:(NSString *)value)
+{
     [AMAAppMetrica setAppEnvironmentValue:value forKey:key];
 }
 
 /**
- * Очистка окружения приложения
+ * Очистка переменных окружения приложения
  * Вызываем нативный метод AppMetrica
  */
-- (void)clearAppEnvironment {
+RCT_EXPORT_METHOD(clearAppEnvironment)
+{
     [AMAAppMetrica clearAppEnvironment];
 }
 
@@ -294,19 +325,21 @@ RCT_EXPORT_MODULE(AppMetrica)
 
 /**
  * Отчет о внешней атрибуции
- * Конвертируем параметры и вызываем нативный метод
+ * Вызываем нативный метод AppMetrica с внешней атрибуцией
  * 
- * @param attribution - словарь с данными внешней атрибуции
+ * @param attribution - словарь с внешней атрибуцией
  */
-- (void)reportExternalAttribution:(NSDictionary *)attribution {
+RCT_EXPORT_METHOD(reportExternalAttribution:(NSDictionary *)attribution)
+{
     NSString *sourceStr = attribution[@"source"];
     AMAAttributionSource source = amarn_getExternalAttributionSource(sourceStr);
     if (source == nil) {
-        NSLog(@"Failed to report external attribution to AppMetrica. Unknown source %@", sourceStr);
+        NSLog(@"AppMetrica: Failed to report external attribution. Unknown source %@", sourceStr);
         return;
     }
-    
+
     NSDictionary *value = attribution[@"value"];
+
     [AMAAppMetrica reportExternalAttribution:value source:source onFailure:^(NSError *error) {
         NSLog(@"Failed to report external attribution to AppMetrica: %@", [error localizedDescription]);
     }];
@@ -316,12 +349,13 @@ RCT_EXPORT_MODULE(AppMetrica)
 
 /**
  * Запрос startup параметров
- * Создаем callback и вызываем нативный метод
+ * Вызываем нативный метод AppMetrica с callback
  * 
  * @param identifiers - массив идентификаторов
- * @param listener - callback функция для получения результата
+ * @param listener - callback для получения результата
  */
-- (void)requestStartupParams:(NSArray *)identifiers listener:(RCTResponseSenderBlock)listener {
+RCT_EXPORT_METHOD(requestStartupParams:(NSArray *)identifiers listener:(RCTResponseSenderBlock)listener)
+{
     AMAIdentifiersCompletionBlock block = ^(NSDictionary<AMAStartupKey,id> * _Nullable identifiers, NSError * _Nullable error) {
         NSDictionary *result = [AMARNStartupParamsUtils toStrartupParamsResult:identifiers];
         NSString *errorStr = [AMARNStartupParamsUtils stringFromRequestStartupParamsError:error];
@@ -333,22 +367,24 @@ RCT_EXPORT_MODULE(AppMetrica)
 // MARK: - Reporter методы
 
 /**
- * Активация reporter
- * Конвертируем параметры и вызываем нативный метод
+ * Активация Reporter
+ * Вызываем нативный метод AppMetrica с конфигурацией Reporter
  * 
- * @param config - словарь с конфигурацией reporter
+ * @param config - словарь с конфигурацией Reporter
  */
-- (void)activateReporter:(NSDictionary *)config {
+RCT_EXPORT_METHOD(activateReporter:(NSDictionary *)config)
+{
     [AMAAppMetrica activateReporterWithConfiguration:[AMARNAppMetricaUtils reporterConfigurationForDictionary:config]];
 }
 
 /**
- * Создание reporter
+ * Получение Reporter по API ключу
  * Вызываем нативный метод AppMetrica
  * 
- * @param apiKey - API ключ для reporter
+ * @param apiKey - API ключ Reporter
  */
-- (void)touchReporter:(NSString *)apiKey {
+RCT_EXPORT_METHOD(touchReporter:(NSString *)apiKey)
+{
     [AMAAppMetrica reporterForAPIKey:apiKey];
 }
 
@@ -356,12 +392,13 @@ RCT_EXPORT_MODULE(AppMetrica)
 
 /**
  * Получение Device ID
- * Возвращаем Device ID приложения
+ * Возвращаем Device ID устройства
  * 
  * @return NSString с Device ID
  */
-- (NSString *)getDeviceId {
-    return [AMAAppMetrica deviceID];
+RCT_EXPORT_METHOD(getDeviceId:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    resolve([AMAAppMetrica deviceID]);
 }
 
 /**
@@ -370,44 +407,50 @@ RCT_EXPORT_MODULE(AppMetrica)
  * 
  * @return NSString с UUID
  */
-- (NSString *)getUuid {
-    return [AMAAppMetrica UUID];
+RCT_EXPORT_METHOD(getUuid:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    resolve([AMAAppMetrica UUID]);
 }
 
-// MARK: - Deferred deeplink (только для Android)
+// MARK: - Deferred deeplink (только для Android, в iOS не реализовано)
 
 /**
- * Запрос deferred deeplink (не реализовано в iOS)
- * Возвращаем пустую функцию
+ * Запрос deferred deeplink (только для Android)
+ * В iOS этот метод не реализован
  * 
  * @param onFailure - callback для ошибки
  * @param onSuccess - callback для успеха
  */
-- (void)requestDeferredDeeplink:(RCTResponseSenderBlock)onFailure onSuccess:(RCTResponseSenderBlock)onSuccess {
-    // iOS не поддерживает deferred deeplink
+RCT_EXPORT_METHOD(requestDeferredDeeplink:(RCTResponseSenderBlock)onFailure onSuccess:(RCTResponseSenderBlock)onSuccess)
+{
+    // It does nothing for iOS
+    onFailure(@[@"Deferred deeplink is not supported on iOS"]);
 }
 
 /**
- * Запрос параметров deferred deeplink (не реализовано в iOS)
- * Возвращаем пустую функцию
+ * Запрос параметров deferred deeplink (только для Android)
+ * В iOS этот метод не реализован
  * 
  * @param onFailure - callback для ошибки
  * @param onSuccess - callback для успеха
  */
-- (void)requestDeferredDeeplinkParameters:(RCTResponseSenderBlock)onFailure onSuccess:(RCTResponseSenderBlock)onSuccess {
-    // iOS не поддерживает deferred deeplink
+RCT_EXPORT_METHOD(requestDeferredDeeplinkParameters:(RCTResponseSenderBlock)onFailure onSuccess:(RCTResponseSenderBlock)onSuccess)
+{
+    // It does nothing for iOS
+    onFailure(@[@"Deferred deeplink parameters are not supported on iOS"]);
 }
 
 // MARK: - Вспомогательные методы
 
 /**
- * Вспомогательный метод для обертывания nil значений
- * Конвертирует nil в NSNull для корректной передачи в JavaScript
+ * Обертка для nil значений
+ * Конвертирует nil в NSNull для передачи в JavaScript
  * 
- * @param value - значение для обертывания
- * @return NSObject - обернутое значение
+ * @param value - значение для обертки
+ * @return NSObject с обернутым значением
  */
-- (NSObject *)wrap:(NSObject *)value {
+- (NSObject *)wrap:(NSObject *)value
+{
     if (value == nil) {
         return [NSNull null];
     }
