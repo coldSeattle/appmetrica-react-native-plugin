@@ -11,6 +11,7 @@ import type {
   DeferredDeeplinkParametersListener,
 } from './deferredDeeplink';
 
+// В файле src/index.ts вашего форка измените строку 12:
 const LINKING_ERROR =
   `The package '@appmetrica/react-native-analytics' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
