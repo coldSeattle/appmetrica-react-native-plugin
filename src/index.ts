@@ -10,6 +10,7 @@ import type {
   DeferredDeeplinkListener,
   DeferredDeeplinkParametersListener,
 } from './deferredDeeplink';
+import AppMetricaTurbo from './AppMetricaTurboModule';
 
 const LINKING_ERROR =
   `The package '@appmetrica/react-native-analytics' doesn't seem to be linked. Make sure: \n\n` +
@@ -17,16 +18,29 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const AppMetricaNative = NativeModules.AppMetrica
-  ? NativeModules.AppMetrica
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+// Try to use Turbo Module first, fallback to legacy module
+const AppMetricaNative = (() => {
+  try {
+    // Check if Turbo Module is available (new architecture)
+    if (AppMetricaTurbo) {
+      return AppMetricaTurbo;
+    }
+  } catch (error) {
+    // Turbo Module not available, fallback to legacy
+  }
+
+  // Fallback to legacy module
+  return NativeModules.AppMetrica
+    ? NativeModules.AppMetrica
+    : new Proxy(
+        {},
+        {
+          get() {
+            throw new Error(LINKING_ERROR);
+          },
+        }
+      );
+})();
 
 var activated = false;
 
@@ -108,7 +122,6 @@ export type { IReporter, ReporterConfig } from './reporter';
 export * from './deferredDeeplink';
 
 export default class AppMetrica {
-
   private static reporters: Map<string, Reporter> = new Map();
 
   static activate(config: AppMetricaConfig) {
@@ -146,7 +159,9 @@ export default class AppMetrica {
     AppMetricaNative.reportError(
       identifier,
       message,
-      _reason instanceof Error ? AppMetricaError.withError(_reason) : AppMetricaError.withObject(_reason)
+      _reason instanceof Error
+        ? AppMetricaError.withError(_reason)
+        : AppMetricaError.withObject(_reason)
     );
   }
 
@@ -154,8 +169,14 @@ export default class AppMetrica {
     AppMetricaNative.reportUnhandledException(AppMetricaError.withError(error));
   }
 
-  static reportErrorWithoutIdentifier(message: string | undefined, error: Error) {
-    AppMetricaNative.reportErrorWithoutIdentifier(message, AppMetricaError.withError(error));
+  static reportErrorWithoutIdentifier(
+    message: string | undefined,
+    error: Error
+  ) {
+    AppMetricaNative.reportErrorWithoutIdentifier(
+      message,
+      AppMetricaError.withError(error)
+    );
   }
 
   static reportEvent(eventName: string, attributes?: Record<string, any>) {
