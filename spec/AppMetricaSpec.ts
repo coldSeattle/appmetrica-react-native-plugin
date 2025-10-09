@@ -77,4 +77,4 @@ export interface Spec extends TurboModule {
  * Если новая архитектура не включена, вернется null
  * В этом случае будем использовать старый Bridge
  */
-export default TurboModuleRegistry.get<Spec>('AppMetrica') as Spec | null;
+export default TurboModuleRegistry.get<Spec>('AppMetricaTurbo') as Spec | null;

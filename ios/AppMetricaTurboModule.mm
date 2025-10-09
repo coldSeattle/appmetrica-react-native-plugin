@@ -25,7 +25,7 @@
 @implementation AppMetricaTurboModule
 
 // Реализуем протокол RCTTurboModule
-RCT_EXPORT_MODULE(AppMetrica)
+RCT_EXPORT_MODULE(AppMetricaTurbo)
 
 // MARK: - Основные методы активации и управления
 
