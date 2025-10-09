@@ -18,7 +18,7 @@
  * 
  * Все методы соответствуют спецификации в AppMetricaSpec.ts
  */
-@interface AppMetricaTurboModule : NSObject <RCTTurboModule>
+@interface AppMetricaTurboModule : NSObject <RCTBridgeModule, RCTTurboModule>
 
 @end
 
