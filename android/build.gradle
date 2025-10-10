@@ -73,6 +73,16 @@ android {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
+
+  // CMake configuration for C++ modules
+  externalNativeBuild {
+    cmake {
+      path "app/src/main/jni/CMakeLists.txt"
+      version "3.13.0"
+    }
+  }
+
+  ndkVersion "21.4.7075529"
 }
 
 repositories {

@@ -32,6 +32,14 @@
     "clean": "del-cli android/build lib",
     "prepare": "bob build"
   },
+  "codegenConfig": {
+    "name": "AppMetricaSpecs",
+    "type": "modules",
+    "jsSrcsDir": "specs",
+    "android": {
+      "javaPackageName": "io.appmetrica.analytics.reactnative.specs"
+    }
+  },
   "keywords": [
     "appmetrica",
     "metrica",

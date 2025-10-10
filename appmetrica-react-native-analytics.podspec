@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/appmetrica/appmetrica-react-native-plugin.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm}"
+  s.source_files = "ios/**/*.{h,m,mm}", "shared/**/*.{h,cpp}"
 
   s.dependency "AppMetricaAnalytics", "5.12.1"
 
