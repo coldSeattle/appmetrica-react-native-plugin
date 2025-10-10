@@ -17,4 +17,5 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
   ../../../../../shared
   ../../../../../build/generated/android/app/build/generated/source/codegen/jni
+  ../../../../../build/generated/build/generated/ios
 )

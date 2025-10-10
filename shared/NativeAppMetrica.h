@@ -1,5 +1,5 @@
 #pragma once
-#include "../../build/generated/build/generated/ios/AppMetricaSpecsJSI.h"
+#include <AppMetricaSpecsJSI.h>
 #include <memory>
 #include <string>
 #include <vector>

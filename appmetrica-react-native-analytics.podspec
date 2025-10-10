@@ -15,6 +15,11 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/appmetrica/appmetrica-react-native-plugin.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm}", "shared/**/*.{h,cpp}"
+  
+  # Add header search paths for generated files
+  s.pod_target_xcconfig = {
+    "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/../build/generated/build/generated/ios\" \"$(PODS_ROOT)/../build/generated/android/app/build/generated/source/codegen/jni\""
+  }
 
   s.dependency "AppMetricaAnalytics", "5.12.1"
 

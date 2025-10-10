@@ -28,6 +28,15 @@ android {
 
     ndkVersion "21.4.7075529"
 }
+
+// Add this to ensure generated files are available
+android {
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['../../node_modules/@appmetrica/react-native-analytics/build/generated/android/app/build/generated/source/codegen/jni']
+        }
+    }
+}
 ```
 
 ### 2. Update your app's `MainApplication.java`
