@@ -18,22 +18,22 @@ namespace facebook::react
             std::string apiKey,
             std::string identifier,
             std::optional<std::string> message,
-            std::optional<AppMetricaError> reason);
+            std::optional<NativeAppMetricaReporterAppMetricaError> reason);
 
         void reportErrorWithoutIdentifier(
             std::string apiKey,
             std::string message,
-            AppMetricaError error);
+            NativeAppMetricaReporterAppMetricaError error);
 
         void reportUnhandledException(
             std::string apiKey,
-            AppMetricaError error);
+            NativeAppMetricaReporterAppMetricaError error);
 
         // Event reporting
         void reportEvent(
             std::string apiKey,
             std::string eventName,
-            std::optional<Object> attributes);
+            std::optional<jsi::Object> attributes);
 
         // Session management
         void pauseSession(std::string apiKey);
@@ -48,26 +48,19 @@ namespace facebook::react
             std::optional<std::string> value);
 
         // User profile
-        void setUserProfileID(std::string apiKey, std::string userProfileID);
+        void setUserProfileID(std::string apiKey, std::optional<std::string> userProfileID);
         void setDataSendingEnabled(std::string apiKey, bool enabled);
-        void reportUserProfile(std::string apiKey, UserProfile userProfile);
+        void reportUserProfile(std::string apiKey, NativeAppMetricaReporterUserProfile userProfile);
 
         // Revenue reporting
-        void reportAdRevenue(std::string apiKey, AdRevenue adRevenue);
-        void reportECommerce(std::string apiKey, ECommerceEvent event);
-        void reportRevenue(std::string apiKey, Revenue revenue);
+        void reportAdRevenue(std::string apiKey, NativeAppMetricaReporterAdRevenue adRevenue);
+        void reportECommerce(std::string apiKey, NativeAppMetricaReporterECommerceEvent event);
+        void reportRevenue(std::string apiKey, NativeAppMetricaReporterRevenue revenue);
 
     private:
         // Helper methods for data conversion
-        std::map<std::string, std::string> convertObjectToStringMap(Object obj);
-        std::vector<std::string> convertArrayToStringVector(std::vector<Object> arr);
-
-        // Platform-specific implementations
-        void reportErrorAndroid(std::string apiKey, std::string identifier, std::optional<std::string> message, std::optional<AppMetricaError> reason);
-        void reportErrorIOS(std::string apiKey, std::string identifier, std::optional<std::string> message, std::optional<AppMetricaError> reason);
-
-        void reportEventAndroid(std::string apiKey, std::string eventName, std::optional<Object> attributes);
-        void reportEventIOS(std::string apiKey, std::string eventName, std::optional<Object> attributes);
+        std::map<std::string, std::string> convertObjectToStringMap(jsi::Runtime &runtime, const jsi::Object &obj);
+        std::vector<std::string> convertArrayToStringVector(jsi::Runtime &runtime, const jsi::Array &arr);
     };
 
 } // namespace facebook::react
