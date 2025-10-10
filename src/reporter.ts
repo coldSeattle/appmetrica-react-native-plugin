@@ -4,25 +4,51 @@ import type { AdRevenue, Revenue } from './revenue';
 import type { ECommerceEvent } from './ecommerce';
 import { AppMetricaError } from './error';
 
+// Import TurboModule for new architecture
+import NativeAppMetricaReporter from '../specs/NativeAppMetricaReporterSpec';
+
 const LINKING_ERROR =
   `The package '@appmetrica/react-native-analytics' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const ReporterNativeModule = NativeModules.AppMetricaReporter
-  ? NativeModules.AppMetricaReporter
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+// Check if new architecture is enabled
+const isNewArchitectureEnabled = () => {
+  try {
+    return NativeAppMetricaReporter !== undefined;
+  } catch (error) {
+    return false;
+  }
+};
+
+// Get the appropriate reporter module based on architecture
+const getReporterModule = () => {
+  if (isNewArchitectureEnabled()) {
+    return NativeAppMetricaReporter;
+  }
+
+  // Fallback to old architecture
+  return NativeModules.AppMetricaReporter
+    ? NativeModules.AppMetricaReporter
+    : new Proxy(
+        {},
+        {
+          get() {
+            throw new Error(LINKING_ERROR);
+          },
+        }
+      );
+};
+
+const ReporterNativeModule = getReporterModule();
 
 export interface IReporter {
-  reportError(identifier: string, message?: string, _reason?: Error | Object): void;
+  reportError(
+    identifier: string,
+    message?: string,
+    _reason?: Error | Object
+  ): void;
   reportErrorWithoutIdentifier(message: string | undefined, error: Error): void;
   reportUnhandledException(error: Error): void;
   reportEvent(eventName: string, attributes?: Record<string, any>): void;
@@ -40,7 +66,6 @@ export interface IReporter {
 }
 
 export class Reporter implements IReporter {
-
   private apiKey: string;
 
   constructor(apiKey: string) {
@@ -52,16 +77,25 @@ export class Reporter implements IReporter {
       this.apiKey,
       identifier,
       message,
-      _reason instanceof Error ? AppMetricaError.withError(_reason) : AppMetricaError.withObject(_reason)
+      _reason instanceof Error
+        ? AppMetricaError.withError(_reason)
+        : AppMetricaError.withObject(_reason)
     );
   }
 
   reportErrorWithoutIdentifier(message: string | undefined, error: Error) {
-    ReporterNativeModule.reportErrorWithoutIdentifier(this.apiKey, message, AppMetricaError.withError(error));
+    ReporterNativeModule.reportErrorWithoutIdentifier(
+      this.apiKey,
+      message,
+      AppMetricaError.withError(error)
+    );
   }
 
   reportUnhandledException(error: Error) {
-    ReporterNativeModule.reportUnhandledException(this.apiKey, AppMetricaError.withError(error));
+    ReporterNativeModule.reportUnhandledException(
+      this.apiKey,
+      AppMetricaError.withError(error)
+    );
   }
 
   reportEvent(eventName: string, attributes?: Record<string, any>) {
@@ -109,7 +143,7 @@ export class Reporter implements IReporter {
   }
 
   reportRevenue(revenue: Revenue) {
-    ReporterNativeModule.reportRevenue(this.apiKey, revenue)
+    ReporterNativeModule.reportRevenue(this.apiKey, revenue);
   }
 }
 
@@ -123,4 +157,4 @@ export type ReporterConfig = {
   dispatchPeriodSeconds?: number;
   userProfileID?: string;
   maxReportsCount?: number;
-}
+};

@@ -11,22 +11,45 @@ import type {
   DeferredDeeplinkParametersListener,
 } from './deferredDeeplink';
 
+// Import TurboModules for new architecture
+import NativeAppMetrica from '../specs/NativeAppMetricaSpec';
+
 const LINKING_ERROR =
   `The package '@appmetrica/react-native-analytics' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const AppMetricaNative = NativeModules.AppMetrica
-  ? NativeModules.AppMetrica
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+// Check if new architecture is enabled
+const isNewArchitectureEnabled = () => {
+  try {
+    // Try to access TurboModule - if it works, new architecture is enabled
+    return NativeAppMetrica !== undefined;
+  } catch (error) {
+    return false;
+  }
+};
+
+// Get the appropriate module based on architecture
+const getAppMetricaModule = () => {
+  if (isNewArchitectureEnabled()) {
+    return NativeAppMetrica;
+  }
+
+  // Fallback to old architecture
+  return NativeModules.AppMetrica
+    ? NativeModules.AppMetrica
+    : new Proxy(
+        {},
+        {
+          get() {
+            throw new Error(LINKING_ERROR);
+          },
+        }
+      );
+};
+
+const AppMetricaNative = getAppMetricaModule();
 
 var activated = false;
 
@@ -108,7 +131,6 @@ export type { IReporter, ReporterConfig } from './reporter';
 export * from './deferredDeeplink';
 
 export default class AppMetrica {
-
   private static reporters: Map<string, Reporter> = new Map();
 
   static activate(config: AppMetricaConfig) {
@@ -146,7 +168,9 @@ export default class AppMetrica {
     AppMetricaNative.reportError(
       identifier,
       message,
-      _reason instanceof Error ? AppMetricaError.withError(_reason) : AppMetricaError.withObject(_reason)
+      _reason instanceof Error
+        ? AppMetricaError.withError(_reason)
+        : AppMetricaError.withObject(_reason)
     );
   }
 
@@ -154,8 +178,14 @@ export default class AppMetrica {
     AppMetricaNative.reportUnhandledException(AppMetricaError.withError(error));
   }
 
-  static reportErrorWithoutIdentifier(message: string | undefined, error: Error) {
-    AppMetricaNative.reportErrorWithoutIdentifier(message, AppMetricaError.withError(error));
+  static reportErrorWithoutIdentifier(
+    message: string | undefined,
+    error: Error
+  ) {
+    AppMetricaNative.reportErrorWithoutIdentifier(
+      message,
+      AppMetricaError.withError(error)
+    );
   }
 
   static reportEvent(eventName: string, attributes?: Record<string, any>) {
