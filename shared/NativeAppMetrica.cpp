@@ -113,7 +113,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::reportEvent(std::string eventName, std::optional<jsi::Object> attributes)
+    void NativeAppMetrica::reportEvent(jsi::Runtime &runtime, std::string eventName, std::optional<jsi::Object> attributes)
     {
 // Platform-specific event reporting
 #ifdef __ANDROID__

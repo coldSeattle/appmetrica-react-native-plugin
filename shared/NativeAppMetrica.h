@@ -1,5 +1,6 @@
 #pragma once
 #include <AppMetricaSpecsJSI.h>
+#include <jsi/jsi.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -35,7 +36,7 @@ namespace facebook::react
         void reportErrorWithoutIdentifier(std::string message, NativeAppMetricaSpecAppMetricaError error);
 
         // Event reporting
-        void reportEvent(std::string eventName, std::optional<jsi::Object> attributes);
+        void reportEvent(jsi::Runtime &runtime, std::string eventName, std::optional<jsi::Object> attributes);
 
         // Location
         void setLocation(std::optional<NativeAppMetricaSpecLocation> location);

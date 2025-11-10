@@ -1,5 +1,6 @@
 #pragma once
 #include <AppMetricaSpecsJSI.h>
+#include <jsi/jsi.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -15,47 +16,52 @@ namespace facebook::react
 
         // Error reporting
         void reportError(
+            jsi::Runtime &runtime,
             std::string apiKey,
             std::string identifier,
             std::optional<std::string> message,
             std::optional<NativeAppMetricaReporterSpecAppMetricaError> reason);
 
         void reportErrorWithoutIdentifier(
+            jsi::Runtime &runtime,
             std::string apiKey,
             std::string message,
             NativeAppMetricaReporterSpecAppMetricaError error);
 
         void reportUnhandledException(
+            jsi::Runtime &runtime,
             std::string apiKey,
             NativeAppMetricaReporterSpecAppMetricaError error);
 
         // Event reporting
         void reportEvent(
+            jsi::Runtime &runtime,
             std::string apiKey,
             std::string eventName,
             std::optional<jsi::Object> attributes);
 
         // Session management
-        void pauseSession(std::string apiKey);
-        void resumeSession(std::string apiKey);
-        void sendEventsBuffer(std::string apiKey);
+        void pauseSession(jsi::Runtime &runtime, std::string apiKey);
+        void resumeSession(jsi::Runtime &runtime, std::string apiKey);
+        void sendEventsBuffer(jsi::Runtime &runtime, std::string apiKey);
 
         // Environment
-        void clearAppEnvironment(std::string apiKey);
+        void clearAppEnvironment(jsi::Runtime &runtime, std::string apiKey);
         void putAppEnvironmentValue(
+            jsi::Runtime &runtime,
             std::string apiKey,
             std::string key,
             std::optional<std::string> value);
 
         // User profile
-        void setUserProfileID(std::string apiKey, std::optional<std::string> userProfileID);
-        void setDataSendingEnabled(std::string apiKey, bool enabled);
-        void reportUserProfile(std::string apiKey, NativeAppMetricaReporterSpecUserProfile userProfile);
+        void setUserProfileID(jsi::Runtime &runtime, std::string apiKey, std::optional<std::string> userProfileID);
+        void setDataSendingEnabled(jsi::Runtime &runtime, std::string apiKey, bool enabled);
+        void reportUserProfile(jsi::Runtime &runtime, std::string apiKey, NativeAppMetricaReporterSpecUserProfile userProfile);
 
         // Revenue reporting
-        void reportAdRevenue(std::string apiKey, NativeAppMetricaReporterSpecAdRevenue adRevenue);
-        void reportECommerce(std::string apiKey, NativeAppMetricaReporterSpecECommerceEvent event);
-        void reportRevenue(std::string apiKey, NativeAppMetricaReporterSpecRevenue revenue);
+        void reportAdRevenue(jsi::Runtime &runtime, std::string apiKey, NativeAppMetricaReporterSpecAdRevenue adRevenue);
+        void reportECommerce(jsi::Runtime &runtime, std::string apiKey, NativeAppMetricaReporterSpecECommerceEvent event);
+        void reportRevenue(jsi::Runtime &runtime, std::string apiKey, NativeAppMetricaReporterSpecRevenue revenue);
 
     private:
         // Helper methods for data conversion

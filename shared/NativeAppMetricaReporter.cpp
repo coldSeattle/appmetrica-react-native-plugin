@@ -10,6 +10,7 @@ namespace facebook::react
 
     // Error reporting
     void NativeAppMetricaReporter::reportError(
+        jsi::Runtime &runtime,
         std::string apiKey,
         std::string identifier,
         std::optional<std::string> message,
@@ -24,6 +25,7 @@ namespace facebook::react
     }
 
     void NativeAppMetricaReporter::reportErrorWithoutIdentifier(
+        jsi::Runtime &runtime,
         std::string apiKey,
         std::string message,
         NativeAppMetricaReporterSpecAppMetricaError error)
@@ -37,6 +39,7 @@ namespace facebook::react
     }
 
     void NativeAppMetricaReporter::reportUnhandledException(
+        jsi::Runtime &runtime,
         std::string apiKey,
         NativeAppMetricaReporterSpecAppMetricaError error)
     {
@@ -50,6 +53,7 @@ namespace facebook::react
 
     // Event reporting
     void NativeAppMetricaReporter::reportEvent(
+        jsi::Runtime &runtime,
         std::string apiKey,
         std::string eventName,
         std::optional<jsi::Object> attributes)
@@ -63,7 +67,7 @@ namespace facebook::react
     }
 
     // Session management
-    void NativeAppMetricaReporter::pauseSession(std::string apiKey)
+    void NativeAppMetricaReporter::pauseSession(jsi::Runtime &runtime, std::string apiKey)
     {
 // Platform-specific session pause
 #ifdef __ANDROID__
@@ -73,7 +77,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetricaReporter::resumeSession(std::string apiKey)
+    void NativeAppMetricaReporter::resumeSession(jsi::Runtime &runtime, std::string apiKey)
     {
 // Platform-specific session resume
 #ifdef __ANDROID__
@@ -83,7 +87,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetricaReporter::sendEventsBuffer(std::string apiKey)
+    void NativeAppMetricaReporter::sendEventsBuffer(jsi::Runtime &runtime, std::string apiKey)
     {
 // Platform-specific buffer sending
 #ifdef __ANDROID__
@@ -94,7 +98,7 @@ namespace facebook::react
     }
 
     // Environment
-    void NativeAppMetricaReporter::clearAppEnvironment(std::string apiKey)
+    void NativeAppMetricaReporter::clearAppEnvironment(jsi::Runtime &runtime, std::string apiKey)
     {
 // Platform-specific app environment clearing
 #ifdef __ANDROID__
@@ -105,6 +109,7 @@ namespace facebook::react
     }
 
     void NativeAppMetricaReporter::putAppEnvironmentValue(
+        jsi::Runtime &runtime,
         std::string apiKey,
         std::string key,
         std::optional<std::string> value)
@@ -118,7 +123,7 @@ namespace facebook::react
     }
 
     // User profile
-    void NativeAppMetricaReporter::setUserProfileID(std::string apiKey, std::optional<std::string> userProfileID)
+    void NativeAppMetricaReporter::setUserProfileID(jsi::Runtime &runtime, std::string apiKey, std::optional<std::string> userProfileID)
     {
 // Platform-specific user profile ID setting
 #ifdef __ANDROID__
@@ -128,7 +133,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetricaReporter::setDataSendingEnabled(std::string apiKey, bool enabled)
+    void NativeAppMetricaReporter::setDataSendingEnabled(jsi::Runtime &runtime, std::string apiKey, bool enabled)
     {
 // Platform-specific data sending setting
 #ifdef __ANDROID__
@@ -139,6 +144,7 @@ namespace facebook::react
     }
 
     void NativeAppMetricaReporter::reportUserProfile(
+        jsi::Runtime &runtime,
         std::string apiKey,
         NativeAppMetricaReporterSpecUserProfile userProfile)
     {
@@ -152,6 +158,7 @@ namespace facebook::react
 
     // Revenue reporting
     void NativeAppMetricaReporter::reportAdRevenue(
+        jsi::Runtime &runtime,
         std::string apiKey,
         NativeAppMetricaReporterSpecAdRevenue adRevenue)
     {
@@ -164,6 +171,7 @@ namespace facebook::react
     }
 
     void NativeAppMetricaReporter::reportECommerce(
+        jsi::Runtime &runtime,
         std::string apiKey,
         NativeAppMetricaReporterSpecECommerceEvent event)
     {
@@ -176,6 +184,7 @@ namespace facebook::react
     }
 
     void NativeAppMetricaReporter::reportRevenue(
+        jsi::Runtime &runtime,
         std::string apiKey,
         NativeAppMetricaReporterSpecRevenue revenue)
     {
