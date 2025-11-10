@@ -15,7 +15,7 @@ namespace facebook::react
         NativeAppMetrica(std::shared_ptr<CallInvoker> jsInvoker);
 
         // Configuration
-        void activate(NativeAppMetricaAppMetricaConfig config);
+        void activate(NativeAppMetricaSpecAppMetricaConfig config);
 
         // Library info
         double getLibraryApiLevel();
@@ -30,15 +30,15 @@ namespace facebook::react
         void reportAppOpen(std::optional<std::string> deeplink);
 
         // Error reporting
-        void reportError(std::string identifier, std::optional<std::string> message, std::optional<NativeAppMetricaAppMetricaError> reason);
-        void reportUnhandledException(NativeAppMetricaAppMetricaError error);
-        void reportErrorWithoutIdentifier(std::string message, NativeAppMetricaAppMetricaError error);
+        void reportError(std::string identifier, std::optional<std::string> message, std::optional<NativeAppMetricaSpecAppMetricaError> reason);
+        void reportUnhandledException(NativeAppMetricaSpecAppMetricaError error);
+        void reportErrorWithoutIdentifier(std::string message, NativeAppMetricaSpecAppMetricaError error);
 
         // Event reporting
         void reportEvent(std::string eventName, std::optional<jsi::Object> attributes);
 
         // Location
-        void setLocation(std::optional<NativeAppMetricaLocation> location);
+        void setLocation(std::optional<NativeAppMetricaSpecLocation> location);
         void setLocationTracking(bool enabled);
 
         // Data sending
@@ -46,14 +46,14 @@ namespace facebook::react
 
         // User profile
         void setUserProfileID(std::optional<std::string> userProfileID);
-        void reportUserProfile(NativeAppMetricaUserProfile userProfile);
+        void reportUserProfile(NativeAppMetricaSpecUserProfile userProfile);
 
         // ECommerce
-        void reportECommerce(NativeAppMetricaECommerceEvent event);
+        void reportECommerce(NativeAppMetricaSpecECommerceEvent event);
 
         // Revenue
-        void reportRevenue(NativeAppMetricaRevenue revenue);
-        void reportAdRevenue(NativeAppMetricaAdRevenue adRevenue);
+        void reportRevenue(NativeAppMetricaSpecRevenue revenue);
+        void reportAdRevenue(NativeAppMetricaSpecAdRevenue adRevenue);
 
         // Environment
         void putErrorEnvironmentValue(std::string key, std::optional<std::string> value);
@@ -61,10 +61,10 @@ namespace facebook::react
         void clearAppEnvironment();
 
         // External Attribution
-        void reportExternalAttribution(NativeAppMetricaExternalAttribution attribution);
+        void reportExternalAttribution(NativeAppMetricaSpecExternalAttribution attribution);
 
         // Reporter management
-        void activateReporter(NativeAppMetricaReporterConfig config);
+        void activateReporter(NativeAppMetricaSpecReporterConfig config);
         void touchReporter(std::string apiKey);
 
         // Device info
@@ -72,7 +72,7 @@ namespace facebook::react
         std::string getUuid();
 
         // Startup params
-        void requestStartupParams(std::vector<std::string> identifiers, std::function<void(std::optional<NativeAppMetricaStartupParams>, std::optional<std::string>)> callback);
+        void requestStartupParams(std::vector<std::string> identifiers, std::function<void(std::optional<NativeAppMetricaSpecStartupParams>, std::optional<std::string>)> callback);
 
         // Deferred deeplinks
         void requestDeferredDeeplink(
@@ -89,8 +89,8 @@ namespace facebook::react
         std::vector<std::string> convertArrayToStringVector(jsi::Runtime &runtime, const jsi::Array &arr);
 
         // Platform-specific implementations
-        void activateAndroid(NativeAppMetricaAppMetricaConfig config);
-        void activateIOS(NativeAppMetricaAppMetricaConfig config);
+        void activateAndroid(NativeAppMetricaSpecAppMetricaConfig config);
+        void activateIOS(NativeAppMetricaSpecAppMetricaConfig config);
     };
 
 } // namespace facebook::react

@@ -9,7 +9,7 @@ namespace facebook::react
     NativeAppMetrica::NativeAppMetrica(std::shared_ptr<CallInvoker> jsInvoker)
         : NativeAppMetricaSpecCxxSpec(std::move(jsInvoker)) {}
 
-    void NativeAppMetrica::activate(NativeAppMetricaAppMetricaConfig config)
+    void NativeAppMetrica::activate(NativeAppMetricaSpecAppMetricaConfig config)
     {
 // Platform-specific activation logic
 #ifdef __ANDROID__
@@ -83,7 +83,7 @@ namespace facebook::react
         }
     }
 
-    void NativeAppMetrica::reportError(std::string identifier, std::optional<std::string> message, std::optional<NativeAppMetricaAppMetricaError> reason)
+    void NativeAppMetrica::reportError(std::string identifier, std::optional<std::string> message, std::optional<NativeAppMetricaSpecAppMetricaError> reason)
     {
 // Platform-specific error reporting
 #ifdef __ANDROID__
@@ -93,7 +93,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::reportUnhandledException(NativeAppMetricaAppMetricaError error)
+    void NativeAppMetrica::reportUnhandledException(NativeAppMetricaSpecAppMetricaError error)
     {
 // Platform-specific unhandled exception reporting
 #ifdef __ANDROID__
@@ -103,7 +103,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::reportErrorWithoutIdentifier(std::string message, NativeAppMetricaAppMetricaError error)
+    void NativeAppMetrica::reportErrorWithoutIdentifier(std::string message, NativeAppMetricaSpecAppMetricaError error)
     {
 // Platform-specific error reporting without identifier
 #ifdef __ANDROID__
@@ -123,7 +123,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::setLocation(std::optional<NativeAppMetricaLocation> location)
+    void NativeAppMetrica::setLocation(std::optional<NativeAppMetricaSpecLocation> location)
     {
         if (location.has_value())
         {
@@ -169,7 +169,7 @@ namespace facebook::react
         }
     }
 
-    void NativeAppMetrica::reportUserProfile(NativeAppMetricaUserProfile userProfile)
+    void NativeAppMetrica::reportUserProfile(NativeAppMetricaSpecUserProfile userProfile)
     {
 // Platform-specific user profile reporting
 #ifdef __ANDROID__
@@ -179,7 +179,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::reportECommerce(NativeAppMetricaECommerceEvent event)
+    void NativeAppMetrica::reportECommerce(NativeAppMetricaSpecECommerceEvent event)
     {
 // Platform-specific ecommerce reporting
 #ifdef __ANDROID__
@@ -189,7 +189,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::reportRevenue(NativeAppMetricaRevenue revenue)
+    void NativeAppMetrica::reportRevenue(NativeAppMetricaSpecRevenue revenue)
     {
 // Platform-specific revenue reporting
 #ifdef __ANDROID__
@@ -199,7 +199,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::reportAdRevenue(NativeAppMetricaAdRevenue adRevenue)
+    void NativeAppMetrica::reportAdRevenue(NativeAppMetricaSpecAdRevenue adRevenue)
     {
 // Platform-specific ad revenue reporting
 #ifdef __ANDROID__
@@ -239,7 +239,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::reportExternalAttribution(NativeAppMetricaExternalAttribution attribution)
+    void NativeAppMetrica::reportExternalAttribution(NativeAppMetricaSpecExternalAttribution attribution)
     {
 // Platform-specific external attribution reporting
 #ifdef __ANDROID__
@@ -249,7 +249,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::activateReporter(NativeAppMetricaReporterConfig config)
+    void NativeAppMetrica::activateReporter(NativeAppMetricaSpecReporterConfig config)
     {
 // Platform-specific reporter activation
 #ifdef __ANDROID__
@@ -289,7 +289,7 @@ namespace facebook::react
 #endif
     }
 
-    void NativeAppMetrica::requestStartupParams(std::vector<std::string> identifiers, std::function<void(std::optional<NativeAppMetricaStartupParams>, std::optional<std::string>)> callback)
+    void NativeAppMetrica::requestStartupParams(std::vector<std::string> identifiers, std::function<void(std::optional<NativeAppMetricaSpecStartupParams>, std::optional<std::string>)> callback)
     {
 // Platform-specific startup params request
 #ifdef __ANDROID__
@@ -339,13 +339,13 @@ namespace facebook::react
     }
 
     // Platform-specific implementations
-    void NativeAppMetrica::activateAndroid(NativeAppMetricaAppMetricaConfig config)
+    void NativeAppMetrica::activateAndroid(NativeAppMetricaSpecAppMetricaConfig config)
     {
         // Android-specific activation logic
         // Will be implemented with JNI calls to existing Android code
     }
 
-    void NativeAppMetrica::activateIOS(NativeAppMetricaAppMetricaConfig config)
+    void NativeAppMetrica::activateIOS(NativeAppMetricaSpecAppMetricaConfig config)
     {
         // iOS-specific activation logic
         // Will be implemented with Objective-C++ calls to existing iOS code

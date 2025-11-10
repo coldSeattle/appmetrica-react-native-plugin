@@ -18,16 +18,16 @@ namespace facebook::react
             std::string apiKey,
             std::string identifier,
             std::optional<std::string> message,
-            std::optional<NativeAppMetricaReporterAppMetricaError> reason);
+            std::optional<NativeAppMetricaReporterSpecAppMetricaError> reason);
 
         void reportErrorWithoutIdentifier(
             std::string apiKey,
             std::string message,
-            NativeAppMetricaReporterAppMetricaError error);
+            NativeAppMetricaReporterSpecAppMetricaError error);
 
         void reportUnhandledException(
             std::string apiKey,
-            NativeAppMetricaReporterAppMetricaError error);
+            NativeAppMetricaReporterSpecAppMetricaError error);
 
         // Event reporting
         void reportEvent(
@@ -50,12 +50,12 @@ namespace facebook::react
         // User profile
         void setUserProfileID(std::string apiKey, std::optional<std::string> userProfileID);
         void setDataSendingEnabled(std::string apiKey, bool enabled);
-        void reportUserProfile(std::string apiKey, NativeAppMetricaReporterUserProfile userProfile);
+        void reportUserProfile(std::string apiKey, NativeAppMetricaReporterSpecUserProfile userProfile);
 
         // Revenue reporting
-        void reportAdRevenue(std::string apiKey, NativeAppMetricaReporterAdRevenue adRevenue);
-        void reportECommerce(std::string apiKey, NativeAppMetricaReporterECommerceEvent event);
-        void reportRevenue(std::string apiKey, NativeAppMetricaReporterRevenue revenue);
+        void reportAdRevenue(std::string apiKey, NativeAppMetricaReporterSpecAdRevenue adRevenue);
+        void reportECommerce(std::string apiKey, NativeAppMetricaReporterSpecECommerceEvent event);
+        void reportRevenue(std::string apiKey, NativeAppMetricaReporterSpecRevenue revenue);
 
     private:
         // Helper methods for data conversion

@@ -13,7 +13,7 @@ namespace facebook::react
         std::string apiKey,
         std::string identifier,
         std::optional<std::string> message,
-        std::optional<NativeAppMetricaReporterAppMetricaError> reason)
+        std::optional<NativeAppMetricaReporterSpecAppMetricaError> reason)
     {
 // Platform-specific error reporting
 #ifdef __ANDROID__
@@ -26,7 +26,7 @@ namespace facebook::react
     void NativeAppMetricaReporter::reportErrorWithoutIdentifier(
         std::string apiKey,
         std::string message,
-        NativeAppMetricaReporterAppMetricaError error)
+        NativeAppMetricaReporterSpecAppMetricaError error)
     {
 // Platform-specific error reporting without identifier
 #ifdef __ANDROID__
@@ -38,7 +38,7 @@ namespace facebook::react
 
     void NativeAppMetricaReporter::reportUnhandledException(
         std::string apiKey,
-        NativeAppMetricaReporterAppMetricaError error)
+        NativeAppMetricaReporterSpecAppMetricaError error)
     {
 // Platform-specific unhandled exception reporting
 #ifdef __ANDROID__
@@ -140,7 +140,7 @@ namespace facebook::react
 
     void NativeAppMetricaReporter::reportUserProfile(
         std::string apiKey,
-        NativeAppMetricaReporterUserProfile userProfile)
+        NativeAppMetricaReporterSpecUserProfile userProfile)
     {
 // Platform-specific user profile reporting
 #ifdef __ANDROID__
@@ -153,7 +153,7 @@ namespace facebook::react
     // Revenue reporting
     void NativeAppMetricaReporter::reportAdRevenue(
         std::string apiKey,
-        NativeAppMetricaReporterAdRevenue adRevenue)
+        NativeAppMetricaReporterSpecAdRevenue adRevenue)
     {
 // Platform-specific ad revenue reporting
 #ifdef __ANDROID__
@@ -165,7 +165,7 @@ namespace facebook::react
 
     void NativeAppMetricaReporter::reportECommerce(
         std::string apiKey,
-        NativeAppMetricaReporterECommerceEvent event)
+        NativeAppMetricaReporterSpecECommerceEvent event)
     {
 // Platform-specific ecommerce reporting
 #ifdef __ANDROID__
@@ -177,7 +177,7 @@ namespace facebook::react
 
     void NativeAppMetricaReporter::reportRevenue(
         std::string apiKey,
-        NativeAppMetricaReporterRevenue revenue)
+        NativeAppMetricaReporterSpecRevenue revenue)
     {
 // Platform-specific revenue reporting
 #ifdef __ANDROID__
