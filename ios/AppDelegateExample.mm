@@ -2,7 +2,6 @@
 // This file shows how to register AppMetrica modules in an iOS app
 
 #import <React/RCTBundleURLProvider.h>
-#import <RCTAppDelegate+Protected.h>
 #import "NativeAppMetrica.h"
 #import "NativeAppMetricaReporter.h"
 

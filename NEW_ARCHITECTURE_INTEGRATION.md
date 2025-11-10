@@ -96,7 +96,6 @@ Add the following to your `AppDelegate.mm`:
 
 ```objc
 #import <React/RCTBundleURLProvider.h>
-#import <RCTAppDelegate+Protected.h>
 #import "NativeAppMetrica.h"
 #import "NativeAppMetricaReporter.h"
 

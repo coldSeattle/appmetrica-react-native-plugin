@@ -15,6 +15,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/appmetrica/appmetrica-react-native-plugin.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm}", "shared/**/*.{h,cpp}"
+  s.exclude_files = "ios/AppDelegateExample.mm"
   
   # Add header search paths for generated files
   s.pod_target_xcconfig = {
