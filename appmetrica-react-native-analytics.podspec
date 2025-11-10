@@ -16,11 +16,6 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm}", "shared/**/*.{h,cpp}"
   s.exclude_files = "ios/AppDelegateExample.mm"
-  
-  # Add header search paths for generated files
-  s.pod_target_xcconfig = {
-    "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/../build/generated/build/generated/ios\" \"$(PODS_ROOT)/../build/generated/android/app/build/generated/source/codegen/jni\""
-  }
 
   s.dependency "AppMetricaAnalytics", "5.12.1"
 
@@ -35,7 +30,7 @@ Pod::Spec.new do |s|
     if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
       s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
       s.pod_target_xcconfig    = {
-          "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
+          "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/ReactCodegen/ReactCodegen.framework/Headers\"",
           "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
           "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
       }
